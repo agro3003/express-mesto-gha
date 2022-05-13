@@ -17,10 +17,11 @@ app.use((req, res, next) => {
 
   next();
 });
+
+app.use('/users', userRouters);
+app.use('/cards', cardRouters);
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Не найдено' });
 });
-app.use('/users', userRouters);
-app.use('/cards', cardRouters);
 
 app.listen(PORT);
