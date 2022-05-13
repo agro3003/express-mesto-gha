@@ -1,0 +1,47 @@
+GET http://localhost:3000/cards
+
+
+
+##########
+GET http://localhost:3000/users/6279bb57010dfe85177b4b82
+
+
+######
+
+POST http://localhost:3000/users
+Content-Type: application/json
+
+{
+  "name": "Rг",
+  "about": "Simply the best",
+  "avatar": "https://mirplaneta.ru/images/5/920.jpg"
+}
+
+########
+
+POST http://localhost:3000/cards/
+Content-Type: application/json
+
+{
+  "name": "h",
+  "link": "lhjlhkilhjklhjklhjklhjlk"
+}
+
+#####
+DELETE http://localhost:3000/cards/627d3510faa625e63836d2fa
+Content-Type: application/json
+#####
+
+
+PUT http://localhost:3000/cards/627d503e75dab275fc9782b4/likes
+Content-Type: application/json
+
+#####
+
+PATCH http://localhost:3000/users/me/avatar
+Content-Type: application/json
+
+{
+  "avatar": "f"
+}
+

@@ -1,0 +1,35 @@
+{
+  "name": "express-mesto-gha",
+  "version": "1.0.0",
+  "description": "[![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-13-sprint.yml) [![Tests](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml/badge.svg)](https://github.com/yandex-praktikum/express-mesto-gha/actions/workflows/tests-14-sprint.yml)\r # Проект Mesto фронтенд + бэкенд",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "npx eslint"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/agro3003/express-mesto-gha.git"
+  },
+  "keywords": [],
+  "author": "student",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/agro3003/express-mesto-gha/issues"
+  },
+  "homepage": "https://github.com/agro3003/express-mesto-gha#readme",
+  "dependencies": {
+    "-": "0.0.1",
+    "D": "^1.0.0",
+    "express": "^4.18.1",
+    "mongoose": "^6.3.2",
+    "nodemon": "^2.0.16"
+  },
+  "devDependencies": {
+    "eslint": "^8.2.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.2"
+  }
+}
