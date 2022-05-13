@@ -38,7 +38,7 @@ Content-Type: application/json
 
 #####
 
-PATCH http://localhost:3000/users/me/avatar
+GET http://localhost:3000/404jhgj
 Content-Type: application/json
 
 {
