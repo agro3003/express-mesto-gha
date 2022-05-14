@@ -42,8 +42,6 @@ module.exports.createUser = (req, res) => {
 };
 
 module.exports.updateProfile = (req, res) => {
-  res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-
   User.findByIdAndUpdate(
     (req.user._id),
     { name: req.body.name, about: req.body.about },

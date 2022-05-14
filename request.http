@@ -38,10 +38,10 @@ Content-Type: application/json
 
 #####
 
-GET http://localhost:3000/404jhgj
+PATCH http://localhost:3000/users/me
 Content-Type: application/json
 
 {
-  "avatar": "f"
+  "name": "f"
 }
 
