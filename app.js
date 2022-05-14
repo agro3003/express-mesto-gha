@@ -20,6 +20,7 @@ app.use((req, res, next) => {
 
 app.use('/users', userRouters);
 app.use('/cards', cardRouters);
+
 app.use('/', (req, res) => {
   res.status(404).send({ message: 'Не найдено' });
 });

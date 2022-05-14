@@ -2,15 +2,8 @@ const { Card } = require('../models/card');
 
 module.exports.getCards = (req, res) => {
   Card.find({})
-    .populate('owner')
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      if (err === 'CastError') {
-        res.status(400).send({ message: 'переданы некорректные данные' });
-      } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
-      }
-    });
+    .catch(() => res.status(500).send({ message: 'Ошибка по умолчанию.' }));
 };
 
 module.exports.removeCard = (req, res) => {
