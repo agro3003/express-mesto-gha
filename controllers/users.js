@@ -12,7 +12,7 @@ const SALT_ROUNDS = 10;
 const JWT_SECRET = 'supersecrettoken';
 
 const getUsers = (req, res, next) => {
-  User.find({}).select('+password')
+  User.find({})
     .then((users) => res.status(200).send(users))
     .catch(next);
 };
@@ -20,8 +20,8 @@ const getUsers = (req, res, next) => {
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) throw new ErrorAuth('Пользователь с указанным _id не найдена.');
-      res.status(201).send(user);
+      if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -89,7 +89,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(200).send({ user }))
+    .then((user) => res.status(200).send(user))
     .catch((err) => {
       if (err.code === 11000) next(new ErrorEmailExist('такой пользователь уже существует'));
       if (err.name === 'ValidationError') next(new ErrorBadRequest('переданы некорректные данные'));
