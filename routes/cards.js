@@ -16,8 +16,8 @@ router.get('/cards', celebrate({
 
 router.post('/cards', celebrate({
   body: Joi.object().keys({
-    name: Joi.string().required().min(2).max(30),
-    link: Joi.string().required().min(11).max(1000),
+    name: Joi.string().min(2).max(30).required(),
+    link: Joi.string().min(11).max(1000).required(),
   }),
   headers: Joi.object().keys({
     authorization: Joi.string().min(2).max(200).required(),

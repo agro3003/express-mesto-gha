@@ -40,7 +40,7 @@ const updateProfile = (req, res, next) => {
   )
     .then((user) => {
       if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
-      res.send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {

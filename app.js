@@ -47,7 +47,7 @@ app.use('/', cardsRouter);
 app.use('/', usersRouter);
 
 app.use('/', (req, res) => {
-  res.status(401).send({ message: 'Страница не найдена' });
+  res.status(404).send({ message: 'Страница не найдена' });
 });
 
 app.use(errors());
