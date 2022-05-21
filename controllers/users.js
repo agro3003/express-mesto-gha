@@ -12,16 +12,16 @@ const SALT_ROUNDS = 10;
 const JWT_SECRET = 'supersecrettoken';
 
 const getUsers = (req, res, next) => {
-  User.find({})
-    .then((users) => res.send(users))
+  User.find({}).select('+password')
+    .then((users) => res.status(200).send(users))
     .catch(next);
 };
 
 const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
-      res.send(user);
+      if (!user) throw new ErrorAuth('Пользователь с указанным _id не найдена.');
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -60,7 +60,7 @@ const updateAvatar = (req, res, next) => {
   )
     .then((user) => {
       if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
-      res.send(user);
+      res.status(200).send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError' || err.name === 'CastError') {
@@ -80,7 +80,7 @@ const createUser = (req, res, next) => {
     password,
   } = req.body;
 
-  if (!validator.isEmail(email)) throw new ErrorBadRequest('Формат Email неправельный');
+  if (!validator.isEmail(email)) throw new ErrorBadRequest('Формат данных неправельный');
   bcrypt.hash(password, SALT_ROUNDS)
     .then((hash) => User.create({
       name,
@@ -102,7 +102,7 @@ const login = (req, res, next) => {
     email,
     password,
   } = req.body;
-  if (!validator.isEmail(email)) throw new ErrorBadRequest('Формат Email неправельный');
+  if (!validator.isEmail(email) || !password) throw new ErrorBadRequest('Формат данных неправельный');
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) throw new ErrorAuth('Неправильная почта или пароль');
@@ -119,11 +119,7 @@ const login = (req, res, next) => {
 const getAuthUserInfo = (req, res, next) => {
   User.findOne(req.user)
     .then((user) => {
-      res.send({
-        name: user.name,
-        about: user.about,
-        avatar: user.avatar,
-      });
+      res.status(200).send({ user });
     })
     .catch(next);
 };
