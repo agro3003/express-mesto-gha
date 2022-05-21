@@ -21,11 +21,11 @@ const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (!user) throw new ErrorAuth('Пользователь с указанным _id не найдена.');
-      res.status(200).send(user);
+      res.status(201).send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ErrorBadRequest('переданы некорректные данные'));
+        next(new ErrorAuth('переданы некорректные данные'));
       } else {
         next(err);
       }
