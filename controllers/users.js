@@ -1,90 +1,139 @@
-const { User } = require('../models/user');
+const validator = require('validator');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
-module.exports.getUsers = async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.send(users);
-  } catch (err) {
-    res.status(500).send({ message: 'Ошибка по умолчанию.' });
-  }
+const { User } = require('../models/user');
+const ErrorAuth = require('../errors/errornotfound');
+const ErrorBadRequest = require('../errors/errorsbadrequest');
+const ErrorNotFound = require('../errors/errornotfound');
+const ErrorEmailExist = require('../errors/erroremailexist');
+
+const SALT_ROUNDS = 10;
+const JWT_SECRET = 'supersecrettoken';
+
+const getUsers = (req, res, next) => {
+  User.find({})
+    .then((users) => res.send(users))
+    .catch(next);
 };
 
-module.exports.getUserById = (req, res) => {
+const getUserById = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Пользователь с указанным _id не найдена.' });
-      } else {
-        res.send(user);
-      }
+      if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(400).send({ message: 'переданы некорректные данные' });
+        next(new ErrorBadRequest('переданы некорректные данные'));
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
 
-module.exports.createUser = (req, res) => {
-  const { name, about, avatar } = req.body;
-
-  User.create({ name, about, avatar })
-    .then((user) => res.send(user))
-    .catch((err) => {
-      if (err.name === 'ValidationError') {
-        res.status(400).send({ message: ' Переданы некорректные данные при создании пользователя.' });
-      } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
-      }
-    });
-};
-
-module.exports.updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   User.findByIdAndUpdate(
     (req.user._id),
     { name: req.body.name, about: req.body.about },
     { new: true, runValidators: true },
   )
     .then((user) => {
-      if (!user) {
-        res.status(404).send({ message: 'Пользователь с указанным _id не найдена.' });
-      } else {
-        res.send(user);
-      }
+      if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
+      res.send(user);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
+        next(new ErrorBadRequest('переданы некорректные данные'));
       } else {
-        res.status(500).send({ message: 'Ошибка по умолчанию.' });
+        next(err);
       }
     });
 };
 
-module.exports.updateAvatar = (req, res) => {
-  if (!req.body.avatar) {
-    res.status(400).send({ message: 'Переданы некорректные данные при обновлении профиля.' });
-  } else {
-    User.findByIdAndUpdate(
-      (req.user._id),
-      { avatar: req.body.avatar },
-      { new: true },
-    )
-      .then((user) => {
-        if (!user) {
-          res.status(404).send({ message: 'Пользователь с указанным _id не найдена.' });
-        } else {
-          res.send(user);
-        }
-      })
-      .catch((err) => {
-        if (err.name === 'CastError') {
-          res.status(400).send({ message: 'переданы некорректные данные' });
-        } else {
-          res.status(500).send({ message: 'Ошибка по умолчанию.' });
-        }
+const updateAvatar = (req, res, next) => {
+  if (!req.body.avatar) throw new ErrorBadRequest('Переданы некорректные данные при обновлении профиля.');
+  User.findByIdAndUpdate(
+    (req.user._id),
+    { avatar: req.body.avatar },
+    { new: true, runValidators: true },
+  )
+    .then((user) => {
+      if (!user) throw new ErrorNotFound('Пользователь с указанным _id не найдена.');
+      res.send(user);
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
+        next(new ErrorBadRequest('переданы некорректные данные'));
+      } else {
+        next(err);
+      }
+    });
+};
+
+const createUser = (req, res, next) => {
+  const {
+    name,
+    about,
+    avatar,
+    email,
+    password,
+  } = req.body;
+
+  if (!validator.isEmail(email)) throw new ErrorBadRequest('Формат Email неправельный');
+  bcrypt.hash(password, SALT_ROUNDS)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then(() => res.status(200).send({ message: `Пользователь ${email} успешно создан` }))
+    .catch((err) => {
+      if (err.code === 11000) next(new ErrorEmailExist('такой пользователь уже существует'));
+      if (err.name === 'ValidationError') next(new ErrorBadRequest('переданы некорректные данные'));
+      next(err);
+    });
+};
+
+const login = (req, res, next) => {
+  const {
+    email,
+    password,
+  } = req.body;
+  if (!validator.isEmail(email)) throw new ErrorBadRequest('Формат Email неправельный');
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) throw new ErrorAuth('Неправильная почта или пароль');
+      return bcrypt.compare(password, user.password)
+        .then((isValidPassword) => {
+          if (!isValidPassword) throw new ErrorAuth('Неправильная почта или пароль');
+          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+          return res.status(200).send({ token });
+        });
+    })
+    .catch(next);
+};
+
+const getAuthUserInfo = (req, res, next) => {
+  User.findOne(req.user)
+    .then((user) => {
+      res.send({
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
       });
-  }
+    })
+    .catch(next);
+};
+
+module.exports = {
+  getUsers,
+  getUserById,
+  createUser,
+  updateProfile,
+  updateAvatar,
+  login,
+  getAuthUserInfo,
 };

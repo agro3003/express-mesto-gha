@@ -1,4 +1,4 @@
-GET http://localhost:3000/cards
+GET http://localhost:3000/users
 
 
 
@@ -19,18 +19,24 @@ Content-Type: application/json
 
 ########
 
-POST http://localhost:3000/cards/
+DELETE  http://localhost:3000/cards/6287ba60c28e291b132acf80
 Content-Type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjg1YWQ2NWQzZTgzMTAxNjQxNGE3N2MiLCJpYXQiOjE2NTMwMDg0MDksImV4cCI6MTY1MzYxMzIwOX0.sjUMJDs1h3HrdAtBZvKsXq1S5Tlk3MxEzzvQoAn9NgI
+
+
+
+#####
+POST  http://localhost:3000/cards
+Content-Type: application/json
+authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2Mjg1YWQ2NWQzZTgzMTAxNjQxNGE3N2MiLCJpYXQiOjE2NTMwMDg0MDksImV4cCI6MTY1MzYxMzIwOX0.sjUMJDs1h3HrdAtBZvKsXq1S5Tlk3MxEzzvQoAn9NgI
 
 {
-  "name": "h",
-  "link": "lhjlhkilhjklhjklhjklhjlk"
+  "name": "gp",
+  "link": "gsdfgsdfgsdfgsdfgdsgf"
 }
 
 #####
-DELETE http://localhost:3000/cards/627d3510faa625e63836d2fa
-Content-Type: application/json
-#####
+
 
 
 PUT http://localhost:3000/cards/627d503e75dab275fc9782b4/likes
@@ -38,10 +44,6 @@ Content-Type: application/json
 
 #####
 
-PATCH http://localhost:3000/users/me
+get http://localhost:3000/users/me
 Content-Type: application/json
-
-{
-  "name": "f"
-}
 
