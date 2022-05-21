@@ -1,8 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const { celebrate, Joi, errors } = require('celebrate');
+const { errors } = require('celebrate');
 const cardsRouter = require('./routes/cards');
-const usersRouter = require('./routes/useer');
+const usersRouter = require('./routes/users');
 const { defaultError } = require('./middlewares/defaulterror');
 const { auth } = require('./middlewares/auth');
 const {
