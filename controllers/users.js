@@ -89,7 +89,7 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then(() => res.status(200).send({ message: `Пользователь ${email} успешно создан` }))
+    .then((user) => res.status(200).send({ user }))
     .catch((err) => {
       if (err.code === 11000) next(new ErrorEmailExist('такой пользователь уже существует'));
       if (err.name === 'ValidationError') next(new ErrorBadRequest('переданы некорректные данные'));
