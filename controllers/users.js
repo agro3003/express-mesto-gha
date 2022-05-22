@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
 const { User } = require('../models/user');
-const ErrorAuth = require('../errors/errornotfound');
+const ErrorAuth = require('../errors/errorauth');
 const ErrorBadRequest = require('../errors/errorsbadrequest');
 const ErrorNotFound = require('../errors/errornotfound');
 const ErrorEmailExist = require('../errors/erroremailexist');
@@ -25,7 +25,7 @@ const getUserById = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        next(new ErrorAuth('переданы некорректные данные'));
+        next(new ErrorBadRequest('переданы некорректные данные'));
       } else {
         next(err);
       }
@@ -89,7 +89,14 @@ const createUser = (req, res, next) => {
       email,
       password: hash,
     }))
-    .then((user) => res.status(200).send(user))
+    .then(() => res.status(200).send({
+      data: {
+        name,
+        about,
+        avatar,
+        email,
+      },
+    }))
     .catch((err) => {
       if (err.code === 11000) next(new ErrorEmailExist('такой пользователь уже существует'));
       if (err.name === 'ValidationError') next(new ErrorBadRequest('переданы некорректные данные'));
@@ -117,7 +124,7 @@ const login = (req, res, next) => {
 };
 
 const getAuthUserInfo = (req, res, next) => {
-  User.findOne(req.user)
+  User.findOneById(req.user._id)
     .then((user) => {
       res.status(200).send({ user });
     })
