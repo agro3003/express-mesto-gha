@@ -126,7 +126,7 @@ const login = (req, res, next) => {
 const getAuthUserInfo = (req, res, next) => {
   User.findOneById(req.user._id)
     .then((user) => {
-      res.status(200).send({ user });
+      res.status(200).send(user);
     })
     .catch(next);
 };
