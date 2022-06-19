@@ -24,6 +24,7 @@ const allowedCors = [
   'http://praktikum.tk',
   'http://localhost:3001',
   'http://localhost:3000',
+  'http://api.doubleempty.nomoreparties.sbs',
   '*',
 ];
 
