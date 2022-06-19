@@ -17,6 +17,8 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
+mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
+
 const allowedCors = [
   'https://praktikum.tk',
   'http://praktikum.tk',
@@ -24,8 +26,6 @@ const allowedCors = [
   'http://localhost:3000',
   '*',
 ];
-
-mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
 
