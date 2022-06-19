@@ -11,14 +11,54 @@ const {
   createUser,
 } = require('./controllers/users');
 const ErrorNotFound = require('./errors/errornotfound');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const { PORT = 3000 } = process.env;
 
 const app = express();
 
+const allowedCors = [
+  'https://praktikum.tk',
+  'http://praktikum.tk',
+  'http://localhost:3001',
+  'http://localhost:3000',
+  '*',
+];
+
 mongoose.connect('mongodb://localhost:27017/mestodb');
 
 app.use(express.json());
+
+app.use(function access(req, res, next) {
+  const { origin } = req.headers;
+
+  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', origin);
+
+  const { method } = req;
+
+  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
+
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
+  }
+
+  const requestHeaders = req.headers['access-control-request-headers'];
+  if (method === 'OPTIONS') {
+    res.header('Access-Control-Allow-Headers', requestHeaders);
+    return res.end();
+  }
+
+  next();
+  return access;
+});
+
+app.use(requestLogger);
+
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Сервер сейчас упадёт');
+  }, 0);
+});
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
@@ -41,6 +81,8 @@ app.use(auth);
 
 app.use('/', cardsRouter);
 app.use('/', usersRouter);
+
+app.use(errorLogger);
 
 app.use('/', (req, res, next) => {
   next(new ErrorNotFound('Страница не найдена'));
