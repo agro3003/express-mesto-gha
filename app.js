@@ -35,7 +35,7 @@ app.use(express.json());
 app.use(function access(req, res, next) {
   const { origin } = req.headers;
 
-  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', 'allowedCors');
+  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', origin);
 
   const { method } = req;
 
