@@ -24,8 +24,8 @@ const allowedCors = [
   'http://praktikum.tk',
   'http://localhost:3001',
   'http://localhost:3000',
-  'http://api.doubleempty.nomoreparties.sbs',
-  '*',
+  'http://localhost:3000/signin',
+  'http://localhost:3000/signup',
 ];
 
 app.use(express.json());
