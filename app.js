@@ -20,6 +20,8 @@ const app = express();
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
 const allowedCors = [
+  'http://doubleempty.nomoredomains.xyz',
+  'https://doubleempty.nomoredomains.xyz',
   'https://praktikum.tk',
   'http://praktikum.tk',
   'http://localhost:3001',
@@ -33,7 +35,7 @@ app.use(express.json());
 app.use(function access(req, res, next) {
   const { origin } = req.headers;
 
-  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', '*');
+  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', 'allowedCors');
 
   const { method } = req;
 
