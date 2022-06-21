@@ -9,7 +9,7 @@ const ErrorNotFound = require('../errors/errornotfound');
 const ErrorEmailExist = require('../errors/erroremailexist');
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = 'supersecrettoken';
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const getUsers = (req, res, next) => {
   User.find({})
@@ -116,7 +116,7 @@ const login = (req, res, next) => {
       return bcrypt.compare(password, user.password)
         .then((isValidPassword) => {
           if (!isValidPassword) throw new ErrorAuth('Неправильная почта или пароль');
-          const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: '7d' });
+          const token = jwt.sign({ _id: user._id }, `${NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'}`, { expiresIn: '7d' });
           return res.status(200).send({ token });
         });
     })
