@@ -30,7 +30,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use(cors);
+app.use(cors());
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
