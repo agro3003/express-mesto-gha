@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { Joi, celebrate, errors } = require('celebrate');
+const cors = require('cors');
 const cardsRouter = require('./routes/cards');
 const usersRouter = require('./routes/users');
 const { defaultError } = require('./middlewares/defaulterror');
@@ -19,41 +20,7 @@ const app = express();
 
 mongoose.connect('mongodb://127.0.0.1:27017/mestodb');
 
-const allowedCors = [
-  'http://doubleempty.nomoredomains.xyz',
-  'https://doubleempty.nomoredomains.xyz',
-  'https://praktikum.tk',
-  'http://praktikum.tk',
-  'http://localhost:3001',
-  'http://localhost:3000',
-  'http://localhost:3000/signin',
-  'http://localhost:3000/signup',
-];
-
 app.use(express.json());
-
-app.use(function access(req, res, next) {
-  const { origin } = req.headers;
-
-  if (allowedCors.includes(origin)) res.header('Access-Control-Allow-Origin', origin);
-
-  const { method } = req;
-
-  const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
-
-  if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Methods', DEFAULT_ALLOWED_METHODS);
-  }
-
-  const requestHeaders = req.headers['access-control-request-headers'];
-  if (method === 'OPTIONS') {
-    res.header('Access-Control-Allow-Headers', requestHeaders);
-    return res.end();
-  }
-
-  next();
-  return access;
-});
 
 app.use(requestLogger);
 
@@ -62,6 +29,8 @@ app.get('/crash-test', () => {
     throw new Error('Сервер сейчас упадёт');
   }, 0);
 });
+
+app.use(cors);
 
 app.post('/signin', celebrate({
   body: Joi.object().keys({
