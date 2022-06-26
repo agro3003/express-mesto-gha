@@ -6,7 +6,6 @@
   "scripts": {
     "start": "node app.js",
     "dev": "nodemon app.js",
-    "test": "jest",
     "lint": "npx eslint ./"
   },
   "repository": {
@@ -14,7 +13,7 @@
     "url": "git+https://github.com/agro3003/express-mesto-gha.git"
   },
   "keywords": [],
-  "author": "student",
+  "author": "Roman Kononov",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/agro3003/express-mesto-gha/issues"
@@ -27,7 +26,7 @@
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
     "express-winston": "^4.2.0",
-    "joi": "^17.6.0",
+    "helmet": "^5.1.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.3.2",
     "validator": "^13.7.0",
@@ -37,7 +36,6 @@
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.2",
-    "jest": "^28.1.1",
     "nodemon": "^2.0.16"
   }
 }
